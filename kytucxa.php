@@ -56,44 +56,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['dangky'])) {
 
     echo "<script>alert('Đăng ký dịch vụ thành công!');</script>";
 }
-//test
+
 $thongbao = "";
 
-// Nếu có hành động đăng ký
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['maphong'])) {
     $maphong = $_POST['maphong'];
 
-    // Kiểm tra sinh viên đã đăng ký phòng nào chưa
     $check = $conn->query("SELECT * FROM danhsacho WHERE MSV = '$msv'");
     if ($check->num_rows > 0) {
         $thongbao = "<script>alert('Bạn đã đăng ký phòng rồi. Không thể đăng ký thêm.');</script>";
     } else {
-        // Lấy thông tin sinh viên
+
         $sql_sv = $conn->query("SELECT * FROM sinhvien WHERE MSV = '$msv'");
         $sv = $sql_sv->fetch_assoc();
 
-        // Lấy thông tin phòng
         $sql_phong = $conn->query("SELECT * FROM phong WHERE Maphong = '$maphong'");
         $phong = $sql_phong->fetch_assoc();
 
-        // Kiểm tra giới tính và chỗ trống
         if ($sv['Gioitinh'] != $phong['Gioitinh']) {
             $thongbao = "<script>alert('Không thể đăng ký. Giới tính không phù hợp.');</script>";
         } elseif ($phong['Songuoio'] >= $phong['Succhua']) {
             $thongbao = "<script>alert('Phòng đã đủ người. Không thể đăng ký.');</script>";
         } else {
-            // Thêm vào danh sách ở
             $conn->query("INSERT INTO danhsacho (Maphong, TenSV, MSV, Khoa, Gioitinh, Sodienthoai)
                         VALUES ('$maphong', '{$sv['Hoten']}', '{$sv['MSV']}', '{$sv['Khoa']}', '{$sv['Gioitinh']}', '{$sv['Sodienthoai']}')");
-
-            // Cập nhật số người ở
             $conn->query("UPDATE phong SET Songuoio = Songuoio + 1 WHERE Maphong = '$maphong'");
-
             $thongbao = "<script>alert('Đăng ký thành công vào phòng');</script>";
         }
     }
 }
-//test
 ?>
 
 <!DOCTYPE html>
@@ -256,37 +247,36 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['maphong'])) {
       </div>
       <div id="register" class="section">
         <div class="main_register">
-          <!-- <h2>Danh sách phòng ký túc xá</h2> -->
           <?php if (!empty($thongbao)): ?>
               <div class="thongbao"><?= $thongbao ?></div>
           <?php endif; ?>
 
-    <table class="DangKyPhong">
-        <tr>
-            <th>Mã phòng</th>
-            <th>Số người ở</th>
-            <th>Sức chứa</th>
-            <th>Giới tính</th>
-            <th>Hành động</th>
-        </tr>
-        <?php
-        $phongs = $conn->query("SELECT * FROM phong");
-        while ($row = $phongs->fetch_assoc()):
-        ?>
+          <table class="DangKyPhong">
             <tr>
-                <td><?= $row['Maphong'] ?></td>
-                <td><?= $row['Songuoio'] ?></td>
-                <td><?= $row['Succhua'] ?></td>
-                <td><?= $row['Gioitinh'] ?></td>
-                <td>
-                    <form method="post" style="margin:0;">
-                        <input type="hidden" name="maphong" value="<?= $row['Maphong'] ?>">
-                        <button type="submit">Đăng ký</button>
-                    </form>
-                </td>
+                <th>Mã phòng</th>
+                <th>Số người ở</th>
+                <th>Sức chứa</th>
+                <th>Giới tính</th>
+                <th>Hành động</th>
             </tr>
-        <?php endwhile; ?>
-    </table>
+            <?php
+            $phongs = $conn->query("SELECT * FROM phong");
+            while ($row = $phongs->fetch_assoc()):
+            ?>
+                <tr>
+                    <td><?= $row['Maphong'] ?></td>
+                    <td><?= $row['Songuoio'] ?></td>
+                    <td><?= $row['Succhua'] ?></td>
+                    <td><?= $row['Gioitinh'] ?></td>
+                    <td>
+                        <form method="post" style="margin:0;">
+                            <input type="hidden" name="maphong" value="<?= $row['Maphong'] ?>">
+                            <button type="submit">Đăng ký</button>
+                        </form>
+                    </td>
+                </tr>
+            <?php endwhile; ?>
+          </table>
         </div>
       </div>
       <div id="service" class="section">
@@ -310,11 +300,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['maphong'])) {
             <p>250,000/tháng (Dọn dẹp phòng ở , hành lang , nhà vệ sinh)</p>
             <button onclick="showForm('VeSinhForm')">Đăng ký</button>
           </div>
-          <!-- Form gửi xe -->
           <div id="GuiXeForm" class="form-overlay">
             <h2>Đăng ký gửi xe</h2>
             <form method="POST">
-            <!-- MSV không hiển thị, lấy từ session -->
               <select name="tendv" required onchange="updateGuiXePrice(this)">
                 <option value="Gửi xe đạp">Xe đạp - 20,000đ</option>
                 <option value="Gửi xe máy">Xe máy - 40,000đ</option>
@@ -325,7 +313,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['maphong'])) {
             </form>
           </div>
 
-          <!-- Form giặt đồ -->
           <div id="GiatDoForm" class="form-overlay">
             <h2>Đăng ký giặt đồ</h2>
             <form method="POST">
@@ -339,7 +326,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['maphong'])) {
             </form>
           </div>
 
-          <!-- Form vệ sinh -->
           <div id="VeSinhForm" class="form-overlay">
             <h2>Đăng ký vệ sinh</h2>
             <form method="POST">
