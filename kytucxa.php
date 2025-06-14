@@ -1,92 +1,169 @@
 <?php
-session_start();
-include 'cndb.php';
+  session_start();
+  include 'cndb.php';
 
-if (!isset($_SESSION['msv'])) {
-    header("Location: login.php");
-    exit();
-}
+  if (!isset($_SESSION['msv'])) {
+      header("Location: login.php");
+      exit();
+  }
 
-$msv = $_SESSION['msv'];
+  $msv = $_SESSION['msv'];
 
-$sql = "SELECT * FROM sinhvien WHERE MSV = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $msv);
-$stmt->execute();
-$result = $stmt->get_result();
-$data = $result->fetch_assoc();
+  $sql = "SELECT * FROM sinhvien WHERE MSV = ?";
+  $stmt = $conn->prepare($sql);
+  $stmt->bind_param("i", $msv);
+  $stmt->execute();
+  $result = $stmt->get_result();
+  $data = $result->fetch_assoc();
 
-function generateRandomMaPhanAnh($length = 6) {
-    return 'PA' . str_pad(mt_rand(0, pow(10, $length)-1), $length, '0', STR_PAD_LEFT);
-}
+  function generateRandomMaPhanAnh($length = 6) {
+      return 'PA' . str_pad(mt_rand(0, pow(10, $length)-1), $length, '0', STR_PAD_LEFT);
+  }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content'])) {
-    $noidung = $conn->real_escape_string($_POST['content']);
-    $ngaygui = date('Y-m-d');
-    $trangthai = 'Đang xử lý';
+  if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content'])) {
+      $noidung = $conn->real_escape_string($_POST['content']);
+      $ngaygui = date('Y-m-d');
+      $trangthai = 'Đang xử lý';
 
-    do {
-        $maphananh = generateRandomMaPhanAnh();
-        $check = $conn->prepare("SELECT Maphananh FROM phananh WHERE Maphananh = ?");
-        $check->bind_param("s", $maphananh);
-        $check->execute();
-        $result = $check->get_result();
-        $check->close();
-    } while ($result->num_rows > 0);
+      do {
+          $maphananh = generateRandomMaPhanAnh();
+          $check = $conn->prepare("SELECT Maphananh FROM phananh WHERE Maphananh = ?");
+          $check->bind_param("s", $maphananh);
+          $check->execute();
+          $result = $check->get_result();
+          $check->close();
+      } while ($result->num_rows > 0);
 
-    $sql = "INSERT INTO phananh (Maphananh, Noidung, Ngaygui, Trangthai, MSV) VALUES (?, ?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssss", $maphananh, $noidung, $ngaygui, $trangthai, $msv);
+      $sql = "INSERT INTO phananh (Maphananh, Noidung, Ngaygui, Trangthai, MSV) VALUES (?, ?, ?, ?, ?)";
+      $stmt = $conn->prepare($sql);
+      $stmt->bind_param("sssss", $maphananh, $noidung, $ngaygui, $trangthai, $msv);
 
-    if ($stmt->execute()) {
-        echo json_encode(["success" => true, "Maphananh" => $maphananh]);
-    } else {
-        echo json_encode(["success" => false, "error" => $stmt->error]);
-    }
+      if ($stmt->execute()) {
+          echo json_encode(["success" => true, "Maphananh" => $maphananh]);
+      } else {
+          echo json_encode(["success" => false, "error" => $stmt->error]);
+      }
 
+      exit;
+  }
+  if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['dangky'])) {
+      $tendv = $_POST['tendv'];
+      $chiphi = (int) $_POST['chiphi'];
+
+      $stmt = $conn->prepare("INSERT INTO dichvu (MSV, Tendichvu, Chiphi) VALUES (?, ?, ?)");
+      $stmt->bind_param("isi", $msv, $tendv, $chiphi);
+      $stmt->execute();
+
+      echo "<script>alert('Đăng ký dịch vụ thành công!');</script>";
+  }
+
+  $thongbao = "";
+
+  if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['maphong'])) {
+      $maphong = $_POST['maphong'];
+
+      $check = $conn->query("SELECT * FROM danhsacho WHERE MSV = '$msv'");
+      if ($check->num_rows > 0) {
+          $thongbao = "<script>alert('Bạn đã đăng ký phòng rồi. Không thể đăng ký thêm.');</script>";
+      } else {
+
+          $sql_sv = $conn->query("SELECT * FROM sinhvien WHERE MSV = '$msv'");
+          $sv = $sql_sv->fetch_assoc();
+
+          $sql_phong = $conn->query("SELECT * FROM phong WHERE Maphong = '$maphong'");
+          $phong = $sql_phong->fetch_assoc();
+
+          if ($sv['Gioitinh'] != $phong['Gioitinh']) {
+              $thongbao = "<script>alert('Không thể đăng ký. Giới tính không phù hợp.');</script>";
+          } elseif ($phong['Songuoio'] >= $phong['Succhua']) {
+              $thongbao = "<script>alert('Phòng đã đủ người. Không thể đăng ký.');</script>";
+          } else {
+              $conn->query("INSERT INTO danhsacho (Maphong, TenSV, MSV, Khoa, Gioitinh, Sodienthoai)
+                          VALUES ('$maphong', '{$sv['Hoten']}', '{$sv['MSV']}', '{$sv['Khoa']}', '{$sv['Gioitinh']}', '{$sv['Sodienthoai']}')");
+              $conn->query("UPDATE phong SET Songuoio = Songuoio + 1 WHERE Maphong = '$maphong'");
+              $thongbao = "<script>alert('Đăng ký thành công vào phòng');</script>";
+          }
+      }
+  }
+
+  $sql_sv = "SELECT * FROM sinhvien WHERE MSV = ?";
+  $stmt_sv = $conn->prepare($sql_sv);
+  $stmt_sv->bind_param("i", $msv);
+  $stmt_sv->execute();
+  $result_sv = $stmt_sv->get_result();
+  $data_sv = $result_sv->fetch_assoc();
+
+  $sql_phong = "SELECT p.Giathue, p.Maphong
+                FROM danhsacho ds
+                JOIN phong p ON ds.Maphong = p.Maphong
+                WHERE ds.MSV = ?";
+  $stmt_phong = $conn->prepare($sql_phong);
+  $stmt_phong->bind_param("i", $msv);
+  $stmt_phong->execute();
+  $result_phong = $stmt_phong->get_result();
+
+  $giathue = 0;
+  $maphong = 0;
+  if ($row = $result_phong->fetch_assoc()) {
+      $giathue = $row['Giathue'];
+      $maphong = $row['Maphong'];
+  }
+
+  $sql_dichvu = "SELECT Tendichvu, Chiphi FROM dichvu WHERE MSV = ?";
+  $stmt_dv = $conn->prepare($sql_dichvu);
+  $stmt_dv->bind_param("i", $msv);
+  $stmt_dv->execute();
+  $result_dv = $stmt_dv->get_result();
+
+  $tongchiphi = $giathue;
+
+  if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['thanhtoan'])) {
+    $msv = $_SESSION['msv'];
+    $stmt = $conn->prepare("DELETE FROM dichvu WHERE MSV = ?");
+    $stmt->bind_param("i", $msv);
+    $stmt->execute();
+    echo json_encode(["success" => true]);
     exit;
 }
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['dangky'])) {
-    $tendv = $_POST['tendv'];
-    $chiphi = (int) $_POST['chiphi'];
+   // test
+    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['thanhtoan'])) {
+    $msv = $_SESSION['msv'];
+    $thang = date('n');
+    $nam = date('Y');
+    $ngay = date('Y-m-d');
+    $tongTien = 0;
 
-    $stmt = $conn->prepare("INSERT INTO dichvu (MSV, Tendichvu, Chiphi) VALUES (?, ?, ?)");
-    $stmt->bind_param("isi", $msv, $tendv, $chiphi);
-    $stmt->execute();
-
-    echo "<script>alert('Đăng ký dịch vụ thành công!');</script>";
-}
-
-$thongbao = "";
-
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['maphong'])) {
-    $maphong = $_POST['maphong'];
-
-    $check = $conn->query("SELECT * FROM danhsacho WHERE MSV = '$msv'");
-    if ($check->num_rows > 0) {
-        $thongbao = "<script>alert('Bạn đã đăng ký phòng rồi. Không thể đăng ký thêm.');</script>";
-    } else {
-
-        $sql_sv = $conn->query("SELECT * FROM sinhvien WHERE MSV = '$msv'");
-        $sv = $sql_sv->fetch_assoc();
-
-        $sql_phong = $conn->query("SELECT * FROM phong WHERE Maphong = '$maphong'");
-        $phong = $sql_phong->fetch_assoc();
-
-        if ($sv['Gioitinh'] != $phong['Gioitinh']) {
-            $thongbao = "<script>alert('Không thể đăng ký. Giới tính không phù hợp.');</script>";
-        } elseif ($phong['Songuoio'] >= $phong['Succhua']) {
-            $thongbao = "<script>alert('Phòng đã đủ người. Không thể đăng ký.');</script>";
-        } else {
-            $conn->query("INSERT INTO danhsacho (Maphong, TenSV, MSV, Khoa, Gioitinh, Sodienthoai)
-                        VALUES ('$maphong', '{$sv['Hoten']}', '{$sv['MSV']}', '{$sv['Khoa']}', '{$sv['Gioitinh']}', '{$sv['Sodienthoai']}')");
-            $conn->query("UPDATE phong SET Songuoio = Songuoio + 1 WHERE Maphong = '$maphong'");
-            $thongbao = "<script>alert('Đăng ký thành công vào phòng');</script>";
-        }
+    $stmt1 = $conn->prepare("SELECT p.Giathue FROM danhsacho d JOIN phong p ON d.Maphong = p.Maphong WHERE d.MSV = ?");
+    $stmt1->bind_param("i", $msv);
+    $stmt1->execute();
+    $res1 = $stmt1->get_result();
+    if ($row1 = $res1->fetch_assoc()) {
+        $tongTien += (int)$row1['Giathue'];
     }
-}
-?>
 
+    $stmt2 = $conn->prepare("SELECT Chiphi FROM dichvu WHERE MSV = ?");
+    $stmt2->bind_param("i", $msv);
+    $stmt2->execute();
+    $res2 = $stmt2->get_result();
+    while ($row2 = $res2->fetch_assoc()) {
+        $tongTien += (int)$row2['Chiphi'];
+    }
+
+    $trangthai = "Đã TT";
+    $stmt3 = $conn->prepare("INSERT INTO giaodich (Ngaygiaodich, Trangthai, Sotien, MSV, Thang, Nam) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt3->bind_param("ssiiii", $ngay, $trangthai, $tongTien, $msv, $thang, $nam);
+    $stmt3->execute();
+
+    $stmt4 = $conn->prepare("DELETE FROM dichvu WHERE MSV = ?");
+    $stmt4->bind_param("i", $msv);
+    $stmt4->execute();
+
+    echo json_encode(["success" => true]);
+    exit;
+}
+
+  // test
+?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -339,9 +416,37 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['maphong'])) {
           </div>
         </div>
       </div>
-
       <div id="pay" class="section">
-
+        <div class="main_pay">
+          <h2>Chi tiết thanh toán</h2>
+          <p><strong>Sinh viên:</strong> <?= htmlspecialchars($data_sv['Hoten'] ?? 'Không rõ') ?> - <strong>MSV:</strong> <?= $msv ?></p>
+          <p><strong>Thanh toán cho tháng <?= date('m') ?>/<?= date('Y') ?></strong></p>
+          <table>
+              <tr>
+                  <th>Loại chi phí</th>
+                  <th>Chi tiết</th>
+                  <th>Số tiền (VND)</th>
+              </tr>
+              <tr>
+                  <td>Tiền phòng</td>
+                  <td>Phòng số <?= $maphong ?></td>
+                  <td><?= number_format($giathue) ?></td>
+              </tr>
+              <?php while ($row = $result_dv->fetch_assoc()): ?>
+                  <tr>
+                      <td>Dịch vụ</td>
+                      <td><?= htmlspecialchars($row['Tendichvu']) ?></td>
+                      <td><?= number_format($row['Chiphi']) ?></td>
+                  </tr>
+                  <?php $tongchiphi += $row['Chiphi']; ?>
+              <?php endwhile; ?>
+              <tr class="tong">
+                  <td colspan="2"><strong>Tổng cộng</strong></td>
+                  <td><strong><?= number_format($tongchiphi) ?> VND</strong></td>
+              </tr>
+          </table>
+          <button onclick="xacNhanThanhToan()">Xác nhận thanh toán</button>
+        </div>
       </div>
       <div id="request" class="section">
         <div class="box_request">
@@ -371,7 +476,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['maphong'])) {
         </div>
       </div>
     </div>
-
     <footer class="footer">
     </footer>
   </div>

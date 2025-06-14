@@ -80,4 +80,31 @@ document.getElementById('request_form').addEventListener('submit', function(e) {
     alert("Gửi phản ánh thất bại.");
   });
 });
+//Thanh toán
+function xacNhanThanhToan() {
+  if (!confirm("Bạn có chắc chắn muốn thanh toán không?")) return;
 
+  fetch('kytucxa.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: 'thanhtoan=true'
+  })
+  .then(res => res.json())
+  .then(result => {
+    if (result.success) {
+      alert("Thanh toán thành công!");
+
+      document.querySelector(".main_pay").innerHTML = `
+        <p>Đã thanh toán thành công.</p>
+      `;
+    } else {
+      alert("Lỗi trong quá trình thanh toán.");
+    }
+  })
+  .catch(error => {
+    console.error(error);
+    alert("Gặp lỗi khi gửi yêu cầu thanh toán.");
+  });
+}
