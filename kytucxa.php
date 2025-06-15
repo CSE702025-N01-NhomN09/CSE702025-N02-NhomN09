@@ -125,7 +125,6 @@
     echo json_encode(["success" => true]);
     exit;
 }
-   // test
     if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['thanhtoan'])) {
     $msv = $_SESSION['msv'];
     $thang = date('n');
@@ -161,8 +160,6 @@
     echo json_encode(["success" => true]);
     exit;
 }
-
-  // test
 ?>
 <!DOCTYPE html>
 <html lang="vi">
