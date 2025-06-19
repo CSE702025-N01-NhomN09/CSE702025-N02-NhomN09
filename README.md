@@ -56,6 +56,8 @@ Back-end: PHP
 
 Cơ sở dữ liệu: MySQL
 
+Mô hình hệ thống: MVC (Model – View – Controller), kiến trúc 3 lớp.
+
 
 📈 6. Ý nghĩa thực tiễn
 Dự án góp phần hiện đại hóa công tác quản lý ký túc xá trong các trường đại học, giảm thiểu sai sót, tăng tính minh bạch và hiệu quả. Đồng thời giúp sinh viên chủ động hơn trong việc theo dõi thông tin cá nhân và tương tác với cán bộ quản lý.
