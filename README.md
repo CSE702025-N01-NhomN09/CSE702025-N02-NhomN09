@@ -1,6 +1,6 @@
 🎯 MÔ TẢ DỰ ÁN: HỆ THỐNG QUẢN LÝ KÝ TÚC XÁ SINH VIÊN
 
-![Uploading ktx.png…]()
+![ktx](https://github.com/user-attachments/assets/c0115343-c021-4185-96fb-735d46685f31)
 
 
 📌 1. Giới thiệu chung
