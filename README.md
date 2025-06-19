@@ -1,5 +1,8 @@
 🎯 MÔ TẢ DỰ ÁN: HỆ THỐNG QUẢN LÝ KÝ TÚC XÁ SINH VIÊN
 
+![Uploading ktx.png…]()
+
+
 📌 1. Giới thiệu chung
 Ký túc xá là nơi ở tập trung dành cho sinh viên đang theo học tại trường, đóng vai trò quan trọng trong việc ổn định cuộc sống và hỗ trợ học tập. Tuy nhiên, với số lượng sinh viên ngày càng tăng và các nghiệp vụ quản lý ngày càng phức tạp, việc quản lý ký túc xá theo phương pháp thủ công truyền thống không còn đáp ứng hiệu quả. Các vấn đề như chồng chéo thông tin, thất thoát dữ liệu, khó khăn trong phân bổ phòng, xử lý yêu cầu và theo dõi chi phí đang gây nhiều trở ngại cho nhà trường và cán bộ quản lý.
 Xuất phát từ thực tế đó, nhóm em xây dựng "Hệ thống quản lý ký túc xá sinh viên" với mục tiêu hỗ trợ nhà trường và cán bộ ký túc xá trong việc theo dõi, điều phối, và quản lý toàn diện các hoạt động nội trú của sinh viên. Hệ thống đồng thời còn giúp sinh viên chủ động hơn trong việc thực hiện các thao tác trực tuyến như xem thông tin phòng, đăng ký và theo dõi thông tin liên quan đến việc ở ký túc xá.
