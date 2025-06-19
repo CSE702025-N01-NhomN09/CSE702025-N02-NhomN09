@@ -8,6 +8,7 @@
 Ký túc xá là nơi ở tập trung dành cho sinh viên đang theo học tại trường, đóng vai trò quan trọng trong việc ổn định cuộc sống và hỗ trợ học tập. Tuy nhiên, với số lượng sinh viên ngày càng tăng và các nghiệp vụ quản lý ngày càng phức tạp, việc quản lý ký túc xá theo phương pháp thủ công truyền thống không còn đáp ứng hiệu quả. Các vấn đề như chồng chéo thông tin, thất thoát dữ liệu, khó khăn trong phân bổ phòng, xử lý yêu cầu và theo dõi chi phí đang gây nhiều trở ngại cho nhà trường và cán bộ quản lý.
 Xuất phát từ thực tế đó, nhóm em xây dựng "Hệ thống quản lý ký túc xá sinh viên" với mục tiêu hỗ trợ nhà trường và cán bộ ký túc xá trong việc theo dõi, điều phối, và quản lý toàn diện các hoạt động nội trú của sinh viên. Hệ thống đồng thời còn giúp sinh viên chủ động hơn trong việc thực hiện các thao tác trực tuyến như xem thông tin phòng, đăng ký và theo dõi thông tin liên quan đến việc ở ký túc xá.
 
+
 🔧 2. Mục tiêu của dự án
 - Tin học hóa toàn bộ quá trình quản lý sinh viên ở ký túc xá.
   
@@ -16,6 +17,7 @@ Xuất phát từ thực tế đó, nhóm em xây dựng "Hệ thống quản l�
 - Cung cấp cho sinh viên công cụ để đăng ký phòng ở, xem thông tin phòng, dịch vụ, tra cứu hóa đơn,phán ánh,... tiện lợi.
   
 - Hỗ trợ nhà trường trong việc thống kê, giám sát và nâng cao chất lượng dịch vụ nội trú.
+
   
 🏗️ 3. Đối tượng sử dụng
 - Sinh viên: Đăng nhập, xem thông tin cá nhân, thông tin phòng, đăng ký phòng, dịch vụ, thanh toán hóa đơn, gửi phản ánh.
@@ -23,6 +25,7 @@ Xuất phát từ thực tế đó, nhóm em xây dựng "Hệ thống quản l�
 - Cán bộ quản lý: Theo dõi sinh viên, cập nhật phòng, nhập hóa đơn, xử lý yêu cầu.
 
 - Nhà trường: Quản lý hệ thống, tài khoản người dùng, tổng hợp báo cáo.
+
 
 🧩 4. Các chức năng chính
 Đối với nhà trường:
@@ -45,12 +48,14 @@ Xuất phát từ thực tế đó, nhóm em xây dựng "Hệ thống quản l�
 - Thanh toán chi phí, hóa đơn
 - Gửi yêu cầu sửa chữa, khiếu nại hoặc phản ánh
 
+
 ⚙️ 5. Công nghệ sử dụng
 Front-end: HTML, CSS, JavaScript
 
 Back-end: PHP
 
 Cơ sở dữ liệu: MySQL
+
 
 📈 6. Ý nghĩa thực tiễn
 Dự án góp phần hiện đại hóa công tác quản lý ký túc xá trong các trường đại học, giảm thiểu sai sót, tăng tính minh bạch và hiệu quả. Đồng thời giúp sinh viên chủ động hơn trong việc theo dõi thông tin cá nhân và tương tác với cán bộ quản lý.
